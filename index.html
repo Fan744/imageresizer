@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Resizer</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #4a90e2;
+      color: white;
+      width: 100%;
+      padding: 15px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .container {
+      margin-top: 20px;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+    }
+
+    input[type="file"], input[type="number"], button {
+      margin: 10px 0;
+      padding: 10px;
+      font-size: 16px;
+      width: 90%;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    button {
+      background: #4a90e2;
+      color: white;
+      cursor: pointer;
+      border: none;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #357abd;
+    }
+
+    img {
+      max-width: 100%;
+      margin: 10px 0;
+      border-radius: 5px;
+    }
+
+    .ads-box {
+      margin: 15px 0;
+      padding: 10px;
+      background: #fafafa;
+      border: 1px dashed #ccc;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<header>📷 Online Image Resizer</header>
+
+<div class="container">
+  <h2>Upload & Resize</h2>
+  <input type="file" id="upload" accept="image/*">
+
+  <div>
+    <input type="number" id="width" placeholder="Width (px)">
+    <input type="number" id="height" placeholder="Height (px)">
+  </div>
+
+  <button onclick="resizeImage()">Resize</button>
+
+  <div id="preview"></div>
+  <a id="download" style="display:none;" download="resized-image.png">
+    <button>Download Image</button>
+  </a>
+
+  <div class="ads-box">
+    <!-- 🔹 यहाँ आप अपना Google AdSense Code डाल सकते हो -->
+    <p>[ Google Ads Placeholder ]</p>
+  </div>
+</div>
+
+<script>
+  let uploadedImage = null;
+
+  document.getElementById("upload").addEventListener("change", function(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        uploadedImage = new Image();
+        uploadedImage.src = e.target.result;
+        uploadedImage.onload = function() {
+          document.getElementById("preview").innerHTML = `<img src="${uploadedImage.src}" alt="Uploaded Image">`;
+        };
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  function resizeImage() {
+    if (!uploadedImage) {
+      alert("कृपया पहले कोई इमेज अपलोड करें!");
+      return;
+    }
+
+    const width = parseInt(document.getElementById("width").value);
+    const height = parseInt(document.getElementById("height").value);
+
+    if (!width || !height) {
+      alert("Width और Height डालें!");
+      return;
+    }
+
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(uploadedImage, 0, 0, width, height);
+
+    const resizedData = canvas.toDataURL("image/png");
+    document.getElementById("preview").innerHTML = `<img src="${resizedData}" alt="Resized Image">`;
+    document.getElementById("download").href = resizedData;
+    document.getElementById("download").style.display = "block";
+  }
+</script>
+
+</body>
+</html>
